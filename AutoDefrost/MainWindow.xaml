@@ -1,0 +1,28 @@
+﻿<Window x:Class="AutoDefrost.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoDefrost"
+        mc:Ignorable="d"
+        Title="Auto Defrost" Height="450" Width="800">
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="240" Margin="57,143,0,0" VerticalAlignment="Top" Width="642"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="121" Margin="57,10,0,0" VerticalAlignment="Top" Width="642"/>
+        <Label Content="DPM Air Temp:" HorizontalAlignment="Left" Margin="27,24,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="BoxDpm_airtemp" HorizontalAlignment="Left" Height="23" Margin="217,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.Name="dpm_airtemp" IsReadOnly="True"/>
+        <Label Content="DPM Dew Point:" HorizontalAlignment="Left" Margin="27,72,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="BoxDpm_dp" HorizontalAlignment="Left" Height="23" Margin="217,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.Name="dpm_dp" IsReadOnly="True"/>
+        <Label Content="TEC Stage Temp:" HorizontalAlignment="Left" Margin="354,24,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="BoxTecObjectTemp" HorizontalAlignment="Left" Height="23" Margin="544,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.Name="dpm_airtemp" IsReadOnly="True"/>
+        <Label Content="TEC Target Temp:" HorizontalAlignment="Left" Margin="354,73,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="BoxTecTargetTemp" HorizontalAlignment="Left" Height="25" Margin="544,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.Name="dpm_airtemp" IsReadOnly="True"/>
+        <RadioButton x:Name="RadioManual" Content="Manual" Margin="423,157,276,234"/>
+        <RadioButton x:Name="RadioAutomatic" Content="Automatic" Margin="71,157,621,234" IsChecked="True" />
+        <Label Content="Manual Temp:" HorizontalAlignment="Left" Margin="354,190,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="BoxManualSetpoint" HorizontalAlignment="Left" Height="25" Margin="544,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="false" />
+        <Label Content="Offset:" HorizontalAlignment="Left" Margin="29,190,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="BoxAutomaticOffset" HorizontalAlignment="Left" Height="25" Margin="219,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="false" Text="1"/>
+
+    </Grid>
+</Window>
