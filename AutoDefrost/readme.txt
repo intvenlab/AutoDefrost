@@ -1,7 +1,11 @@
-Auto-defrost operates 
+Auto-defrost operates to set the stage temp N degrees above the dewpoint. 
 
+
+
+The DPM is on 192.168.1.10:8080 for management (IP set by static entry in router)
 
 Configured the DPM as follows: 
+
 
 http://192.168.1.119:8085?dewpoint=[td]&airtemp=[ta]&rh=[rh]&sn=[probesn]
 
