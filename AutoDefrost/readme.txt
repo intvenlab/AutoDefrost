@@ -36,3 +36,9 @@ Dev Notes:
     airtemp
     rh
     sn
+
+Run-time configuration of the TEC: 
+
+ - set 50010 (int32) to 1 
+ - set 50011 (int32) to 1
+ - 50012 is the param to write for the real-time time setpoint. 

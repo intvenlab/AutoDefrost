@@ -73,6 +73,7 @@ namespace AutoDefrost
                 {
                     MeComPhySerialPort meComPhySerialPort = new MeComPhySerialPort();
                     meComPhySerialPort.OpenWithDefaultSettings(portName, 57600);
+                    
                     MeComQuerySet meComQuerySet = new MeComQuerySet(meComPhySerialPort);
                     meComQuerySet.SetDefaultDeviceAddress(0);
                     meComQuerySet.SetIsReady(true);
@@ -89,6 +90,10 @@ namespace AutoDefrost
                 }
 
             }
+            
+            // init settings - see see 5136j TEC coms document. 
+            meComBasicCmd.SetINT32Value(null, 50010, 1, 1);  // Sine Ramp Start Point
+            meComBasicCmd.SetINT32Value(null, 50011, 1, 1);  // Object Target Temperature Source Selection
 
 
         }
@@ -96,11 +101,11 @@ namespace AutoDefrost
         {
             ReadTecValues();
             ReadDPMValues();
-            //UpdateTargetTemp();
+            UpdateTargetTemp();
         }
         void timer_TEC(object sender, EventArgs e)
         {
-            UpdateTargetTemp();
+            //UpdateTargetTemp();
         }
         private void UpdateTargetTemp()
         {
@@ -133,7 +138,8 @@ namespace AutoDefrost
         private void SetTecTargetTemp(float target) {
             Console.WriteLine("Set TEC temp to: " + target);
 
-            meComBasicCmd.SetFloatValue(null, 3000, 1, target); 
+            //meComBasicCmd.SetFloatValue(null, 3000, 1, target);
+            meComBasicCmd.SetFloatValue(null, 50012, 1, target);
 
         }
         private void ReadDPMValues()
@@ -164,13 +170,13 @@ namespace AutoDefrost
                 TecVoltage = meComBasicCmd.GetFloatValue(null, 1021, 1);
                 TecBoardTemp = meComBasicCmd.GetFloatValue(null, 1063, 1);
                 TecStablity = meComBasicCmd.GetINT32Value(null, 1200, 1);
-                Console.WriteLine("Device status: " + TecDeviceStatus + "Object Temp: " + TecObjectTemp);
+                Console.WriteLine("Device status: " + TecDeviceStatus + " Object Temp: " + TecObjectTemp + " Amps: " + TecCurrent);
             } 
             catch { Console.WriteLine("Tec protocol error");  }
 
             BoxTecObjectTemp.Text = TecObjectTemp.ToString("F", new CultureInfo("en-US"));
             BoxTecTargetTemp.Text = TecTargetTemp.ToString("F", new CultureInfo("en-US"));
-
+            BoxTecAmps.Text = TecCurrent.ToString("F", new CultureInfo("en-US"));
             //BoxTecObjectTemp.Text = "blah";
 
 
