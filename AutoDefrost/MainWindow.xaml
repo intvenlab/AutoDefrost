@@ -25,6 +25,8 @@
         <TextBox x:Name="BoxAutomaticOffset" HorizontalAlignment="Left" Height="25" Margin="219,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="false" Text="1"/>
         <Label Content="TEC Amps:" HorizontalAlignment="Left" Margin="354,118,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
         <TextBox x:Name="BoxTecAmps" HorizontalAlignment="Left" Height="25" Margin="544,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="True"/>
+        <Label Content="Max Change Per Second:" HorizontalAlignment="Left" Margin="29,320,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="BoxMaxChangePerSecond" HorizontalAlignment="Left" Height="25" Margin="219,322,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="false" Text="0.05"/>
 
     </Grid>
 </Window>

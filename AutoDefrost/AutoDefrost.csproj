@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Winter-80_icon-icons.com_57238.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MeSoft.MeCom.Core">
       <HintPath>..\MeSoft.MeCom.Core\bin\Debug\MeSoft.MeCom.Core.dll</HintPath>
@@ -104,6 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Winter-80_icon-icons.com_57238.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

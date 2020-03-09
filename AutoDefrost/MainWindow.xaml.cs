@@ -42,6 +42,10 @@ namespace AutoDefrost
         float TecBoardTemp;
         int TecStablity;
 
+        float TecMaxChange; // The max temp change per second. 
+        float TecDesiredTemp;
+        bool TecValidSetPoint; 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -60,8 +64,8 @@ namespace AutoDefrost
             timer.Start();
 
             DispatcherTimer timer2 = new DispatcherTimer();
-            timer2.Interval = TimeSpan.FromSeconds(60);
-            timer2.Tick += timer_TEC;
+            timer2.Interval = TimeSpan.FromSeconds(1);
+            timer2.Tick += tec_ramper;
             timer2.Start();
 
         }
@@ -103,9 +107,22 @@ namespace AutoDefrost
             ReadDPMValues();
             UpdateTargetTemp();
         }
-        void timer_TEC(object sender, EventArgs e)
+        void tec_ramper(object sender, EventArgs e)
         {
-            //UpdateTargetTemp();
+            if (TecValidSetPoint == false) { return; }
+
+            try { TecMaxChange = float.Parse(BoxMaxChangePerSecond.Text); } catch { return;  }
+            if (Math.Abs(TecDesiredTemp - TecTargetTemp) < TecMaxChange)
+            {
+                SetTecTargetTemp(TecDesiredTemp);
+            } else if (TecDesiredTemp > TecTargetTemp)
+            {
+                SetTecTargetTemp(TecTargetTemp + TecMaxChange);
+            } else if (TecDesiredTemp < TecTargetTemp)
+            {
+                SetTecTargetTemp(TecTargetTemp - TecMaxChange);
+            } 
+
         }
         private void UpdateTargetTemp()
         {
@@ -115,25 +132,30 @@ namespace AutoDefrost
             float ManualSetPoint;
 
 
-            if (age.TotalMinutes > 1) { return; }
 
                 if ((bool)RadioAutomatic.IsChecked)
                 {
+                    if (age.TotalMinutes > 1) { return; }
                     try { Offset = float.Parse(BoxAutomaticOffset.Text); } catch { return; }
                     if (dpm.dpm_dewpoint + Offset > dpm.dpm_airtemp)
                     {
-                        SetTecTargetTemp(dpm.dpm_airtemp);
+                        SetTecDesiredTemp(dpm.dpm_airtemp);
                     }
                     else 
                     {
-                        SetTecTargetTemp(dpm.dpm_dewpoint + Offset);
+                        SetTecDesiredTemp(dpm.dpm_dewpoint + Offset);
                     }
                 } else // Manual Mode
                 {
                     try { ManualSetPoint = float.Parse(BoxManualSetpoint.Text); } catch { return; }
-                    SetTecTargetTemp(ManualSetPoint);
+                    SetTecDesiredTemp(ManualSetPoint);
                 }
 
+        }
+        private void SetTecDesiredTemp(float target)
+        {
+            TecDesiredTemp = target;
+            TecValidSetPoint = true; 
         }
         private void SetTecTargetTemp(float target) {
             Console.WriteLine("Set TEC temp to: " + target);
