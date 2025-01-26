@@ -21,6 +21,7 @@ using MeSoft.MeCom.PhyWrapper;
 using System.Timers;
 using System.Windows.Threading;
 using System.Globalization;
+using System.Linq.Expressions;
 
 namespace AutoDefrost
 {
@@ -32,6 +33,7 @@ namespace AutoDefrost
         private MeComBasicCmd meComBasicCmd;
         private string meComPort;
         private HttpServer dpm;
+        E5EC controller;
 
         int TecDeviceStatus;
         float TecObjectTemp;
@@ -44,7 +46,10 @@ namespace AutoDefrost
 
         float TecMaxChange; // The max temp change per second. 
         float TecDesiredTemp;
-        bool TecValidSetPoint; 
+        bool TecValidSetPoint;
+        float ChamberCurrentTemp;
+        float ChamberSetPoint;
+
 
         public MainWindow()
         {
@@ -55,6 +60,17 @@ namespace AutoDefrost
             dpm.Start();
             
 
+            controller = new E5EC();
+            if (controller.Connect())
+            {
+                Console.WriteLine("woo");
+                var temp = controller.GetCurrentTemperature();
+                controller.SetSetpoint(59);
+                var setpoint = controller.GetSetpoint();
+                Console.WriteLine($"Current temp: {temp}, setpoint: {setpoint}");
+
+            }
+
             SetupTEC();
 
 
@@ -62,7 +78,7 @@ namespace AutoDefrost
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += timer_Tick;
             timer.Start();
-
+                                                                                                                                                                                                                                                
             DispatcherTimer timer2 = new DispatcherTimer();
             timer2.Interval = TimeSpan.FromSeconds(1);
             timer2.Tick += tec_ramper;
@@ -104,8 +120,11 @@ namespace AutoDefrost
         void timer_Tick(object sender, EventArgs e)
         {
             ReadTecValues();
+            ReadDiffusionValues();
             ReadDPMValues();
-            UpdateTargetTemp();
+            UpdateTargetTempStage();
+            UpdateTargetTempChamber();
+
         }
         void tec_ramper(object sender, EventArgs e)
         {
@@ -124,32 +143,58 @@ namespace AutoDefrost
             } 
 
         }
-        private void UpdateTargetTemp()
+        private void UpdateTargetTempChamber()
+        {
+            TimeSpan age = DateTime.Now - dpm.dpm_last_update;
+            float ChamberOffset;
+            float ChamberManualSetPoint;
+            if ((bool)RadioAutomaticDiffusionFromAir.IsChecked)
+            {
+                if (age.TotalSeconds > 10) { return; }
+                try { ChamberOffset = float.Parse(BoxAutomaticOffsetDiffusion.Text); } catch { return; }
+                controller.SetSetpoint(dpm.dpm_airtemp + ChamberOffset);
+
+            }
+            else if ((bool)RadioAutomaticDiffusionFromDP.IsChecked)
+            {
+                if (age.TotalSeconds > 10) { return; }
+                try { ChamberOffset = float.Parse(BoxAutomaticOffsetDiffusion.Text); } catch { return; }
+                controller.SetSetpoint(dpm.dpm_dewpoint + ChamberOffset);
+
+            }
+
+            else // Manual Mode
+            {
+                try { ChamberManualSetPoint = float.Parse(BoxManualSetpointDiffusion.Text); } catch { return; }
+                controller.SetSetpoint(ChamberManualSetPoint);
+            }
+        }
+        private void UpdateTargetTempStage()
         {
             TimeSpan age = DateTime.Now - dpm.dpm_last_update;
 
-            float Offset;
-            float ManualSetPoint;
+            float StageOffset;
+            float StageManualSetPoint;
 
-
-
-                if ((bool)RadioAutomatic.IsChecked)
+            if ((bool)RadioAutomatic.IsChecked)
+            {
+                try { StageOffset = float.Parse(BoxAutomaticOffset.Text); } catch { return; }
+                if (age.TotalSeconds > 10) { return; }
+                if (dpm.dpm_dewpoint + StageOffset > dpm.dpm_airtemp)
                 {
-                    if (age.TotalMinutes > 1) { return; }
-                    try { Offset = float.Parse(BoxAutomaticOffset.Text); } catch { return; }
-                    if (dpm.dpm_dewpoint + Offset > dpm.dpm_airtemp)
-                    {
-                        SetTecDesiredTemp(dpm.dpm_airtemp);
-                    }
-                    else 
-                    {
-                        SetTecDesiredTemp(dpm.dpm_dewpoint + Offset);
-                    }
-                } else // Manual Mode
-                {
-                    try { ManualSetPoint = float.Parse(BoxManualSetpoint.Text); } catch { return; }
-                    SetTecDesiredTemp(ManualSetPoint);
+                    SetTecDesiredTemp(dpm.dpm_airtemp);
                 }
+                else 
+                {
+                    SetTecDesiredTemp(dpm.dpm_dewpoint + StageOffset);
+                }
+            } else // Manual Mode
+            {
+                try { StageManualSetPoint = float.Parse(BoxManualSetpoint.Text); } catch { return; }
+                SetTecDesiredTemp(StageManualSetPoint);
+            }
+
+
 
         }
         private void SetTecDesiredTemp(float target)
@@ -177,6 +222,16 @@ namespace AutoDefrost
                 BoxDpm_dp.Text = "NaN";
                 BoxDpm_airtemp.Text = "NaN";
             }
+
+        }
+        private void ReadDiffusionValues()
+        {
+            
+            ChamberSetPoint = (float)controller.GetSetpoint();
+            ChamberCurrentTemp = (float) controller.GetCurrentTemperature();
+
+            BoxDiffusionTargetTemp.Text = ChamberSetPoint.ToString();
+            BoxDiffusionTemp.Text = ChamberCurrentTemp.ToString();
 
         }
         private void ReadTecValues()

@@ -5,28 +5,57 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoDefrost"
         mc:Ignorable="d"
-        Title="Auto Defrost" Height="450" Width="800">
-    <Grid>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="139" Margin="57,171,0,0" VerticalAlignment="Top" Width="642"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="156" Margin="57,10,0,0" VerticalAlignment="Top" Width="642"/>
-        <Label Content="DPM Air Temp:" HorizontalAlignment="Left" Margin="27,24,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
-        <TextBox x:Name="BoxDpm_airtemp" HorizontalAlignment="Left" Height="23" Margin="217,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.Name="dpm_airtemp" IsReadOnly="True"/>
-        <Label Content="DPM Dew Point:" HorizontalAlignment="Left" Margin="27,72,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
-        <TextBox x:Name="BoxDpm_dp" HorizontalAlignment="Left" Height="23" Margin="217,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.Name="dpm_dp" IsReadOnly="True"/>
-        <Label Content="TEC Stage Temp:" HorizontalAlignment="Left" Margin="354,24,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
-        <TextBox x:Name="BoxTecObjectTemp" HorizontalAlignment="Left" Height="23" Margin="544,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.Name="dpm_airtemp" IsReadOnly="True"/>
-        <Label Content="TEC Target Temp:" HorizontalAlignment="Left" Margin="354,73,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
-        <TextBox x:Name="BoxTecTargetTemp" HorizontalAlignment="Left" Height="25" Margin="544,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.Name="dpm_airtemp" IsReadOnly="True"/>
-        <RadioButton x:Name="RadioManual" Content="Manual" Margin="423,185,276,206"/>
-        <RadioButton x:Name="RadioAutomatic" Content="Automatic" Margin="71,185,621,206" IsChecked="True" />
-        <Label Content="Manual Temp:" HorizontalAlignment="Left" Margin="354,218,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
-        <TextBox x:Name="BoxManualSetpoint" HorizontalAlignment="Left" Height="25" Margin="544,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="false" />
-        <Label Content="Offset:" HorizontalAlignment="Left" Margin="29,218,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
-        <TextBox x:Name="BoxAutomaticOffset" HorizontalAlignment="Left" Height="25" Margin="219,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="false" Text="1"/>
-        <Label Content="TEC Amps:" HorizontalAlignment="Left" Margin="354,118,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
-        <TextBox x:Name="BoxTecAmps" HorizontalAlignment="Left" Height="25" Margin="544,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="True"/>
-        <Label Content="Max Change Per Second:" HorizontalAlignment="Left" Margin="29,320,0,0" VerticalAlignment="Top" Height="27" Width="162" HorizontalContentAlignment="Right"/>
-        <TextBox x:Name="BoxMaxChangePerSecond" HorizontalAlignment="Left" Height="25" Margin="219,322,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="false" Text="0.05"/>
+        Title="Auto Defrost" Height="583" Width="726">
+    <Grid Margin="0,19,0,-277">
+        <!-- DPM Section -->
+        <GroupBox Header="DPM Readings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="57,10,0,0" Width="642" Height="60">
+            <Grid>
+                <Label Content="DPM Air Temp:" HorizontalAlignment="Left" Margin="27,10,0,0" VerticalAlignment="Top" Width="149" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxDpm_airtemp" HorizontalAlignment="Left" Height="23" Margin="181,12,0,0" VerticalAlignment="Top" Width="131" IsReadOnly="True"/>
+                <Label Content="DPM Dew Point:" HorizontalAlignment="Left" Margin="366,10,0,0" VerticalAlignment="Top" Width="128" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxDpm_dp" HorizontalAlignment="Left" Height="23" Margin="499,12,0,0" VerticalAlignment="Top" Width="117" IsReadOnly="True"/>
+            </Grid>
+        </GroupBox>
 
+        <!-- Stage Section -->
+        <GroupBox Header="Stage Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="57,75,0,0" Width="642" Height="235">
+            <Grid>
+                <RadioButton x:Name="RadioAutomatic" Content="Automatic" HorizontalAlignment="Left" Margin="30,20,0,0" VerticalAlignment="Top" IsChecked="True" />
+                <Label Content="Offset:" HorizontalAlignment="Left" Margin="30,60,0,0" VerticalAlignment="Top" Width="86" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxAutomaticOffset" HorizontalAlignment="Left" Height="25" Margin="120,60,0,0" VerticalAlignment="Top" Width="132" Text="1"/>
+
+                <RadioButton x:Name="RadioManual" Content="Manual" HorizontalAlignment="Left" Margin="30,134,0,0" VerticalAlignment="Top" />
+                <Label Content="Temp:" HorizontalAlignment="Left" Margin="30,166,0,0" VerticalAlignment="Top" Width="85" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxManualSetpoint" HorizontalAlignment="Left" Height="25" Margin="120,166,0,0" VerticalAlignment="Top" Width="132" />
+
+                <Label Content="Stage Temp:" HorizontalAlignment="Left" Margin="320,20,0,0" VerticalAlignment="Top" Width="114" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxTecObjectTemp" HorizontalAlignment="Left" Height="23" Margin="450,20,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
+                <Label Content="Stage Target:" HorizontalAlignment="Left" Margin="320,60,0,0" VerticalAlignment="Top" Width="114" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxTecTargetTemp" HorizontalAlignment="Left" Height="23" Margin="450,60,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
+                <Label Content="Delta Rate:" HorizontalAlignment="Left" Margin="30,90,0,0" VerticalAlignment="Top" Width="86" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxMaxChangePerSecond" HorizontalAlignment="Left" Height="25" Margin="120,90,0,0" VerticalAlignment="Top" Width="132" Text="0.05"/>
+                <Label Content="Stage Amps:" HorizontalAlignment="Left" Margin="320,100,0,0" VerticalAlignment="Top" Width="114" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxTecAmps" HorizontalAlignment="Left" Height="23" Margin="450,100,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- Diffusion Chamber Section -->
+        <GroupBox Header="Diffusion Chamber Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="57,320,0,0" Width="642" Height="204">
+            <Grid>
+                <RadioButton x:Name="RadioAutomaticDiffusionFromAir" Content="Offset from Air"  HorizontalAlignment="Left" Margin="30,20,0,0" VerticalAlignment="Top" IsChecked="True" />
+                <RadioButton x:Name="RadioAutomaticDiffusionFromDP" Content="Offset From DP" HorizontalAlignment="Left" Margin="176,20,0,0" VerticalAlignment="Top" IsChecked="False" />
+                <Label Content="Offset:" HorizontalAlignment="Left" Margin="30,60,0,0" VerticalAlignment="Top" Width="86" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxAutomaticOffsetDiffusion" HorizontalAlignment="Left" Height="25" Margin="120,60,0,0" VerticalAlignment="Top" Width="132" Text="1"/>
+
+                <RadioButton x:Name="RadioManualDiffusion" Content="Manual" HorizontalAlignment="Left" Margin="30,110,0,0" VerticalAlignment="Top" />
+                <Label Content="Temp:" HorizontalAlignment="Left" Margin="30,140,0,0" VerticalAlignment="Top" Width="85" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxManualSetpointDiffusion" HorizontalAlignment="Left" Height="25" Margin="120,140,0,0" VerticalAlignment="Top" Width="132" />
+
+                <Label Content="Chamber Temp:" HorizontalAlignment="Left" Margin="320,20,0,0" VerticalAlignment="Top" Width="114" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxDiffusionTemp" HorizontalAlignment="Left" Height="23" Margin="450,20,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
+                <Label Content="Chamber Target:" HorizontalAlignment="Left" Margin="320,60,0,0" VerticalAlignment="Top" Width="114" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="BoxDiffusionTargetTemp" HorizontalAlignment="Left" Height="23" Margin="450,60,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>
