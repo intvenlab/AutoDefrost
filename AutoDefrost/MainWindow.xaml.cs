@@ -120,7 +120,7 @@ namespace AutoDefrost
         void timer_Tick(object sender, EventArgs e)
         {
             ReadTecValues();
-            ReadDiffusionValues();
+            ReadChamberValues();
             ReadDPMValues();
             UpdateTargetTempStage();
             UpdateTargetTempChamber();
@@ -146,26 +146,26 @@ namespace AutoDefrost
         private void UpdateTargetTempChamber()
         {
             TimeSpan age = DateTime.Now - dpm.dpm_last_update;
-            float ChamberOffset;
+            float ChamberOffset; 
             float ChamberManualSetPoint;
-            if ((bool)RadioAutomaticDiffusionFromAir.IsChecked)
+            if ((bool)RadioAutomaticChamberFromAir.IsChecked)
             {
                 if (age.TotalSeconds > 10) { return; }
-                try { ChamberOffset = float.Parse(BoxAutomaticOffsetDiffusion.Text); } catch { return; }
+                try { ChamberOffset = float.Parse(BoxAutomaticOffsetChamber.Text); } catch { return; }
                 controller.SetSetpoint(dpm.dpm_airtemp + ChamberOffset);
 
             }
-            else if ((bool)RadioAutomaticDiffusionFromDP.IsChecked)
+            else if ((bool)RadioAutomaticChamberFromDP.IsChecked)
             {
                 if (age.TotalSeconds > 10) { return; }
-                try { ChamberOffset = float.Parse(BoxAutomaticOffsetDiffusion.Text); } catch { return; }
+                try { ChamberOffset = float.Parse(BoxAutomaticOffsetChamber.Text); } catch { return; }
                 controller.SetSetpoint(dpm.dpm_dewpoint + ChamberOffset);
 
             }
 
             else // Manual Mode
             {
-                try { ChamberManualSetPoint = float.Parse(BoxManualSetpointDiffusion.Text); } catch { return; }
+                try { ChamberManualSetPoint = float.Parse(BoxManualSetpointChamber.Text); } catch { return; }
                 controller.SetSetpoint(ChamberManualSetPoint);
             }
         }
@@ -224,14 +224,14 @@ namespace AutoDefrost
             }
 
         }
-        private void ReadDiffusionValues()
+        private void ReadChamberValues()
         {
             
             ChamberSetPoint = (float)controller.GetSetpoint();
             ChamberCurrentTemp = (float) controller.GetCurrentTemperature();
 
-            BoxDiffusionTargetTemp.Text = ChamberSetPoint.ToString();
-            BoxDiffusionTemp.Text = ChamberCurrentTemp.ToString();
+            BoxChamberTargetTemp.Text = ChamberSetPoint.ToString();
+            BoxChamberTemp.Text = ChamberCurrentTemp.ToString();
 
         }
         private void ReadTecValues()

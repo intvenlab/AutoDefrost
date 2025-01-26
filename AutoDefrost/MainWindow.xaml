@@ -39,22 +39,22 @@
             </Grid>
         </GroupBox>
 
-        <!-- Diffusion Chamber Section -->
-        <GroupBox Header="Diffusion Chamber Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="57,320,0,0" Width="642" Height="204">
+        <!-- Chamber Chamber Section -->
+        <GroupBox Header="Chamber Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="57,320,0,0" Width="642" Height="204">
             <Grid>
-                <RadioButton x:Name="RadioAutomaticDiffusionFromAir" Content="Offset from Air"  HorizontalAlignment="Left" Margin="30,20,0,0" VerticalAlignment="Top" IsChecked="True" />
-                <RadioButton x:Name="RadioAutomaticDiffusionFromDP" Content="Offset From DP" HorizontalAlignment="Left" Margin="176,20,0,0" VerticalAlignment="Top" IsChecked="False" />
+                <RadioButton x:Name="RadioAutomaticChamberFromAir" Content="Offset from Air"  HorizontalAlignment="Left" Margin="30,20,0,0" VerticalAlignment="Top" IsChecked="True" />
+                <RadioButton x:Name="RadioAutomaticChamberFromDP" Content="Offset From DP" HorizontalAlignment="Left" Margin="176,20,0,0" VerticalAlignment="Top" IsChecked="False" />
                 <Label Content="Offset:" HorizontalAlignment="Left" Margin="30,60,0,0" VerticalAlignment="Top" Width="86" HorizontalContentAlignment="Right"/>
-                <TextBox x:Name="BoxAutomaticOffsetDiffusion" HorizontalAlignment="Left" Height="25" Margin="120,60,0,0" VerticalAlignment="Top" Width="132" Text="1"/>
+                <TextBox x:Name="BoxAutomaticOffsetChamber" HorizontalAlignment="Left" Height="25" Margin="120,60,0,0" VerticalAlignment="Top" Width="132" Text="1"/>
 
-                <RadioButton x:Name="RadioManualDiffusion" Content="Manual" HorizontalAlignment="Left" Margin="30,110,0,0" VerticalAlignment="Top" />
+                <RadioButton x:Name="RadioManualChamber" Content="Manual" HorizontalAlignment="Left" Margin="30,110,0,0" VerticalAlignment="Top" />
                 <Label Content="Temp:" HorizontalAlignment="Left" Margin="30,140,0,0" VerticalAlignment="Top" Width="85" HorizontalContentAlignment="Right"/>
-                <TextBox x:Name="BoxManualSetpointDiffusion" HorizontalAlignment="Left" Height="25" Margin="120,140,0,0" VerticalAlignment="Top" Width="132" />
+                <TextBox x:Name="BoxManualSetpointChamber" HorizontalAlignment="Left" Height="25" Margin="120,140,0,0" VerticalAlignment="Top" Width="132" />
 
                 <Label Content="Chamber Temp:" HorizontalAlignment="Left" Margin="320,20,0,0" VerticalAlignment="Top" Width="114" HorizontalContentAlignment="Right"/>
-                <TextBox x:Name="BoxDiffusionTemp" HorizontalAlignment="Left" Height="23" Margin="450,20,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
+                <TextBox x:Name="BoxChamberTemp" HorizontalAlignment="Left" Height="23" Margin="450,20,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
                 <Label Content="Chamber Target:" HorizontalAlignment="Left" Margin="320,60,0,0" VerticalAlignment="Top" Width="114" HorizontalContentAlignment="Right"/>
-                <TextBox x:Name="BoxDiffusionTargetTemp" HorizontalAlignment="Left" Height="23" Margin="450,60,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
+                <TextBox x:Name="BoxChamberTargetTemp" HorizontalAlignment="Left" Height="23" Margin="450,60,0,0" VerticalAlignment="Top" Width="132" IsReadOnly="True"/>
             </Grid>
         </GroupBox>
     </Grid>

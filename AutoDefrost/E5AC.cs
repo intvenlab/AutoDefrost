@@ -66,13 +66,15 @@ namespace AutoDefrost
         public double GetCurrentTemperature()
         {
             ushort[] registers = _modbusMaster.ReadHoldingRegisters(_slaveAddress, 0x2000, 1);
-            return registers[0] / 10.0; // Convert to Celsius
+            short signedValue = (short)registers[0];
+            return signedValue / 10.0; // Convert to Celsius
         }
 
         public double GetSetpoint()
         {
             ushort[] registers = _modbusMaster.ReadHoldingRegisters(_slaveAddress, 0x2601, 1);
-            return registers[0] / 10.0; // Convert to Celsius
+            short signedValue = (short)registers[0];
+            return signedValue / 10.0; // Convert to Celsius
         }
 
         public void SetSetpoint(double setpoint)
