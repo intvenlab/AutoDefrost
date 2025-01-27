@@ -48,12 +48,15 @@ namespace AutoDefrost
         float TecVoltage;
         float TecBoardTemp;
         int TecStablity;
+        bool TecConnected = false;
 
         float TecMaxChange; // The max temp change per second. 
         float TecDesiredTemp;
         bool TecValidSetPoint;
         float ChamberCurrentTemp;
         float ChamberSetPoint;
+        bool ChamberConnected = false;
+
 
         private static readonly string folderPath = "C:\\sramperlogs"; // Change this to your folder path
 
@@ -76,7 +79,7 @@ namespace AutoDefrost
                 var temp = controller.GetCurrentTemperature();
                 var setpoint = controller.GetSetpoint();
                 Logger.Info($"Current temp: {temp}, setpoint: {setpoint}");
-
+                ChamberConnected = true;
             }
 
             SetupTEC();
@@ -154,7 +157,7 @@ namespace AutoDefrost
                     Logger.Info("Port: " + portName);
 
                     Logger.Info("IF String: " + identString);
-                    if (!String.IsNullOrEmpty(identString)) { meComPort = portName; break; }
+                    if (!String.IsNullOrEmpty(identString)) { meComPort = portName; TecConnected = true; break; }
                 }
                 catch
                 {
@@ -162,13 +165,15 @@ namespace AutoDefrost
                 }
 
             }
-            
+
+            if (!TecConnected) { return; }
             // init settings - see see 5136j TEC coms document. 
             meComBasicCmd.SetINT32Value(null, 50010, 1, 1);  // Sine Ramp Start Point
             meComBasicCmd.SetINT32Value(null, 50011, 1, 1);  // Object Target Temperature Source Selection
 
 
         }
+        
 
         private void OnNewFileDetected(object sender, FileSystemEventArgs e)
         {
@@ -213,10 +218,57 @@ namespace AutoDefrost
             ReadDPMValues();
             UpdateTargetTempStage();
             UpdateTargetTempChamber();
+            UpdateUIControls();
 
+        }
+        void UpdateUIControls()
+        {
+            if (TecConnected)
+            {
+                RadioAutomatic.IsEnabled = true;
+                RadioManual.IsEnabled = true;
+                BoxMaxChangePerSecond.IsEnabled = true;
+                BoxAutomaticOffset.IsEnabled = true;
+                BoxManualSetpoint.IsEnabled = true;
+                BoxTecObjectTemp.IsEnabled = true;
+                BoxTecTargetTemp.IsEnabled = true;
+                BoxTecAmps.IsEnabled = true;
+            }
+            else
+            {
+                RadioAutomatic.IsEnabled = false;
+                RadioManual.IsEnabled = false;
+                BoxMaxChangePerSecond.IsEnabled = false;
+                BoxAutomaticOffset.IsEnabled = false;
+                BoxManualSetpoint.IsEnabled = false;
+                BoxTecObjectTemp.IsEnabled = false;
+                BoxTecTargetTemp.IsEnabled = false;
+                BoxTecAmps.IsEnabled = false;
+            }
+            if (ChamberConnected)
+            {
+                RadioAutomaticChamberFromAir.IsEnabled = true;
+                RadioAutomaticChamberFromDP.IsEnabled = true;
+                RadioManualChamber.IsEnabled = true;
+                BoxAutomaticOffsetChamber.IsEnabled = true;
+                BoxManualSetpointChamber.IsEnabled = true;
+                BoxChamberTemp.IsEnabled = true;
+                BoxChamberTargetTemp.IsEnabled = true;
+            }
+            else
+            {
+                RadioAutomaticChamberFromAir.IsEnabled = false;
+                RadioAutomaticChamberFromDP.IsEnabled = false;
+                RadioManualChamber.IsEnabled = false;
+                BoxAutomaticOffsetChamber.IsEnabled = false;
+                BoxManualSetpointChamber.IsEnabled = false;
+                BoxChamberTemp.IsEnabled = false;
+                BoxChamberTargetTemp.IsEnabled = false;
+            }
         }
         void tec_ramper(object sender, EventArgs e)
         {
+            if (!TecConnected) { return; }
             if (TecValidSetPoint == false) { return; }
 
             try { TecMaxChange = float.Parse(BoxMaxChangePerSecond.Text); } catch { return;  }
@@ -234,6 +286,7 @@ namespace AutoDefrost
         }
         private void UpdateTargetTempChamber()
         {
+            if (!ChamberConnected) { return; }
             TimeSpan age = DateTime.Now - dpm.dpm_last_update;
             float ChamberOffset; 
             float ChamberManualSetPoint;
@@ -260,6 +313,7 @@ namespace AutoDefrost
         }
         private void UpdateTargetTempStage()
         {
+            if (!TecConnected) { return; }
             TimeSpan age = DateTime.Now - dpm.dpm_last_update;
 
             float StageOffset;
@@ -292,6 +346,7 @@ namespace AutoDefrost
             TecValidSetPoint = true; 
         }
         private void SetTecTargetTemp(float target) {
+            if (!TecConnected) { return; }
             Logger.Info("Set TEC temp to: " + target);
 
             //meComBasicCmd.SetFloatValue(null, 3000, 1, target);
@@ -302,7 +357,7 @@ namespace AutoDefrost
         {
             TimeSpan age = DateTime.Now - dpm.dpm_last_update;
 
-            if (age.TotalMinutes < 1)
+            if (age.TotalSeconds < 30)
             {
                 BoxDpm_dp.Text = dpm.dpm_dewpoint.ToString("F", new CultureInfo("en-US"));
                 BoxDpm_airtemp.Text = dpm.dpm_airtemp.ToString("F", new CultureInfo("en-US"));
@@ -315,7 +370,7 @@ namespace AutoDefrost
         }
         private void ReadChamberValues()
         {
-            
+            if (!ChamberConnected) { return; }
             ChamberSetPoint = (float)controller.GetSetpoint();
             ChamberCurrentTemp = (float) controller.GetCurrentTemperature();
 
@@ -325,6 +380,7 @@ namespace AutoDefrost
         }
         private void ReadTecValues()
         {
+            if (!TecConnected) { return; }
             try
             {
 
