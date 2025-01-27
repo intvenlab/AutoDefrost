@@ -108,7 +108,7 @@ namespace AutoDefrost
 
                 // Log the build time using NLog
                 Logger.Info($"Executable Build Time: {buildTime:yyyy-MM-dd HH:mm:ss}");
-                this.Title = $"InterstellarDownload build {buildTime:yyyy-MM-dd HH:mm:ss}";
+                this.Title = $"AutoDefrost build {buildTime:yyyy-MM-dd HH:mm:ss}";
             }
             catch (Exception ex)
             {
