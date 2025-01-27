@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO.Ports;
+using NLog;
 using NModbus;
 using NModbus.Serial;
 
@@ -7,6 +8,7 @@ namespace AutoDefrost
 {
     public class E5EC : IDisposable
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private SerialPort _serialPort;
         private IModbusSerialMaster _modbusMaster;
         private readonly byte _slaveAddress;
@@ -32,7 +34,7 @@ namespace AutoDefrost
             {
                 try
                 {
-                    Console.WriteLine($"Trying port: {portName}");
+                    Logger.Info($"Trying port: {portName}");
                     _serialPort = new SerialPort(portName, 9600, Parity.Even, 8, StopBits.One)
                     {
                         ReadTimeout = 1000,
@@ -49,17 +51,17 @@ namespace AutoDefrost
                     // Test the connection by reading a known register (e.g., process value register)
                     _modbusMaster.ReadHoldingRegisters(_slaveAddress, 0x2000, 1);
 
-                    Console.WriteLine($"Connected to controller on {portName}");
+                    Logger.Info($"Connected to controller on {portName}");
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to connect on {portName}: {ex.Message}");
+                    Logger.Info($"Failed to connect on {portName}: {ex.Message}");
                     _serialPort?.Close();
                 }
             }
 
-            Console.WriteLine("No controller found on available COM ports.");
+            Logger.Info("No controller found on available COM ports.");
             return false;
         }
 

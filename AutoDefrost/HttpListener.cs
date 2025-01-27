@@ -7,11 +7,13 @@ using System.Net;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Collections.Specialized;
+using NLog;
 
 namespace AutoDefrost
 {
     class HttpServer : IDisposable
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private HttpListener httpListener;
         private Thread listenerLoop;
         private Thread[] requestProcessors;
@@ -73,16 +75,16 @@ namespace AutoDefrost
             {
                 while (httpListener.IsListening)
                 {
-                    Console.WriteLine("The listener is listening!");
+                    Logger.Info("The listener is listening!");
                     HttpListenerContext context = httpListener.GetContext();
 
                     messages.Add(context);
-                    Console.WriteLine("The listener has added a message!");
+                    Logger.Info("The listener has added a message!");
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Logger.Info(e.Message);
             }
         }
 
@@ -96,41 +98,41 @@ namespace AutoDefrost
 
         private void Processor(int number, BlockingCollection<HttpListenerContext> messages)
         {
-            Console.WriteLine("Processor {0} started.", number);
+            Logger.Info("Processor {0} started.", number);
             try
             {
                 for (; ; )
                 {
-                    Console.WriteLine("Processor {0} awoken.", number);
+                    Logger.Info("Processor {0} awoken.", number);
                     HttpListenerContext context = messages.Take();
-                    Console.WriteLine("Processor {0} dequeued message.", number);
+                    Logger.Info("Processor {0} dequeued message.", number);
                     Response(context);
-                    Console.WriteLine("dewpoint: " + context.Request.QueryString["dewpoint"]);
+                    Logger.Info("dewpoint: " + context.Request.QueryString["dewpoint"]);
 
                     if (context.Request.QueryString.Count >0)
                     {
                         //UpdateValues(context.Request.QueryString);
-                            if (context.Request.QueryString["dewpoint"] != null) { Console.WriteLine("woo got DP"); dpm_dewpoint = float.Parse(context.Request.QueryString["dewpoint"]); }
-                            if (context.Request.QueryString["airtemp"] != null) { Console.WriteLine("woo got airtemp"); dpm_airtemp = float.Parse(context.Request.QueryString["airtemp"]); }
-                            if (context.Request.QueryString["rh"] != null) { Console.WriteLine("woo got rh"); dpm_hr = float.Parse(context.Request.QueryString["rh"]); }
-                            if (context.Request.QueryString["sn"] != null) { Console.WriteLine("woo got sn"); dpm_sn = context.Request.QueryString["sn"]; }
+                            if (context.Request.QueryString["dewpoint"] != null) { Logger.Info("woo got DP"); dpm_dewpoint = float.Parse(context.Request.QueryString["dewpoint"]); }
+                            if (context.Request.QueryString["airtemp"] != null) { Logger.Info("woo got airtemp"); dpm_airtemp = float.Parse(context.Request.QueryString["airtemp"]); }
+                            if (context.Request.QueryString["rh"] != null) { Logger.Info("woo got rh"); dpm_hr = float.Parse(context.Request.QueryString["rh"]); }
+                            if (context.Request.QueryString["sn"] != null) { Logger.Info("woo got sn"); dpm_sn = context.Request.QueryString["sn"]; }
                             dpm_last_update = DateTime.Now;
                     }
                 }
             }
             catch { }
 
-            Console.WriteLine("Processor {0} terminated.", number);
+            Logger.Info("Processor {0} terminated.", number);
         }
 
         private void UpdateValues(NameValueCollection queryString)
         {
             
             lock(m_lock) {
-                //if ( queryString["dewpoint"] != null) { Console.WriteLine("woo got DP"); dpm_dewpoint =  float.Parse(queryString["dewpoint"]); }
-                //if (queryString["airtemp"] != null) { Console.WriteLine("woo got airtemp"); dpm_airtemp = float.Parse(queryString["airtemp"]); }
-                //if (queryString["rh"] != null) { Console.WriteLine("woo got rh"); dpm_hr = float.Parse(queryString["rh"]); }
-                //if (queryString["sn"] != null) { Console.WriteLine("woo got sn"); dpm_sn = queryString["sn"]; }
+                //if ( queryString["dewpoint"] != null) { Logger.Info("woo got DP"); dpm_dewpoint =  float.Parse(queryString["dewpoint"]); }
+                //if (queryString["airtemp"] != null) { Logger.Info("woo got airtemp"); dpm_airtemp = float.Parse(queryString["airtemp"]); }
+                //if (queryString["rh"] != null) { Logger.Info("woo got rh"); dpm_hr = float.Parse(queryString["rh"]); }
+                //if (queryString["sn"] != null) { Logger.Info("woo got sn"); dpm_sn = queryString["sn"]; }
                 //dpm_last_update = DateTime.Now;
                 }
 
