@@ -37,8 +37,12 @@ namespace AutoDefrost
         private FileSystemWatcher watcher; // Class-level variable
         private MeComBasicCmd meComBasicCmd;
         private string meComPort;
-        private HttpServer dpm;
+        //private HttpServer dpm;
         E5EC controller;
+        //PosiTectorDPM dpm;
+        PosiTectorDPM dpm;
+
+
 
         int TecDeviceStatus;
         float TecObjectTemp;
@@ -58,6 +62,8 @@ namespace AutoDefrost
         bool ChamberConnected = false;
 
 
+        
+
         private static readonly string folderPath = "C:\\sramperlogs"; // Change this to your folder path
 
 
@@ -67,9 +73,13 @@ namespace AutoDefrost
             InitializeComponent();
             LogBuildTime();
 
-            dpm = new HttpServer(5);
-            dpm.Port = 8085;
-            dpm.Start();
+            //dpm = new HttpServer(5);
+            //dpm.Port = 8085;
+            //dpm.Start();
+
+
+            dpm = new PosiTectorDPM();
+            dpm.Connect();
 
 
             controller = new E5EC();
@@ -154,14 +164,14 @@ namespace AutoDefrost
                     meComQuerySet.SetIsReady(true);
                     meComBasicCmd = new MeComBasicCmd(meComQuerySet);
                     string identString = meComBasicCmd.GetIdentString(null);
-                    Logger.Info("Port: " + portName);
+                    Logger.Info("TEC: Port: " + portName);
 
-                    Logger.Info("IF String: " + identString);
+                    Logger.Info("TEC: IF String: " + identString);
                     if (!String.IsNullOrEmpty(identString)) { meComPort = portName; TecConnected = true; break; }
                 }
                 catch
                 {
-                    Logger.Info("Port ERROR: " + portName);
+                    Logger.Info("TEC: Port ERROR: " + portName);
                 }
 
             }
@@ -190,14 +200,19 @@ namespace AutoDefrost
                     return;
                 }
                 string variablesToWrite = "";
-                variablesToWrite += $"DPM_dewpoint: {dpm.dpm_dewpoint}\r\n";
-                variablesToWrite += $"DPM_airtemp: {dpm.dpm_airtemp}\r\n";
+                variablesToWrite += $"DPM_dewpoint: {dpm.DewPointTemperature}\r\n";
+                variablesToWrite += $"DPM_airtemp: {dpm.AirTemperature}\r\n";
+                variablesToWrite += $"TecConnected: {TecConnected}\r\n";
+
                 variablesToWrite += $"TecCurrent: {TecCurrent}\r\n";
                 variablesToWrite += $"TecTargetTemp: {TecTargetTemp}\r\n";
                 variablesToWrite += $"TecObjectTemp: {TecObjectTemp}\r\n";
+                variablesToWrite += $"ChamberConnected: {ChamberConnected}\r\n";
                 variablesToWrite += $"ChamberCurrentTemp: {ChamberCurrentTemp}\r\n";
                 variablesToWrite += $"ChamberSetPoint: {ChamberSetPoint}\r\n";
 
+                Logger.Info("Shutter detected, adding log file: {newFilePath}");
+                Logger.Info(variablesToWrite);
 
 
 
@@ -213,6 +228,7 @@ namespace AutoDefrost
         }
         void timer_Tick(object sender, EventArgs e)
         {
+            dpm.ReadData();
             ReadTecValues();
             ReadChamberValues();
             ReadDPMValues();
@@ -287,21 +303,21 @@ namespace AutoDefrost
         private void UpdateTargetTempChamber()
         {
             if (!ChamberConnected) { return; }
-            TimeSpan age = DateTime.Now - dpm.dpm_last_update;
+            TimeSpan age = DateTime.Now - dpm.LastUpdate;
             float ChamberOffset; 
             float ChamberManualSetPoint;
             if ((bool)RadioAutomaticChamberFromAir.IsChecked)
             {
                 if (age.TotalSeconds > 10) { return; }
                 try { ChamberOffset = float.Parse(BoxAutomaticOffsetChamber.Text); } catch { return; }
-                controller.SetSetpoint(dpm.dpm_airtemp + ChamberOffset);
+                controller.SetSetpoint(dpm.AirTemperature + ChamberOffset);
 
             }
             else if ((bool)RadioAutomaticChamberFromDP.IsChecked)
             {
                 if (age.TotalSeconds > 10) { return; }
                 try { ChamberOffset = float.Parse(BoxAutomaticOffsetChamber.Text); } catch { return; }
-                controller.SetSetpoint(dpm.dpm_dewpoint + ChamberOffset);
+                controller.SetSetpoint(dpm.DewPointTemperature + ChamberOffset);
 
             }
 
@@ -314,7 +330,7 @@ namespace AutoDefrost
         private void UpdateTargetTempStage()
         {
             if (!TecConnected) { return; }
-            TimeSpan age = DateTime.Now - dpm.dpm_last_update;
+            TimeSpan age = DateTime.Now - dpm.LastUpdate;
 
             float StageOffset;
             float StageManualSetPoint;
@@ -323,13 +339,13 @@ namespace AutoDefrost
             {
                 try { StageOffset = float.Parse(BoxAutomaticOffset.Text); } catch { return; }
                 if (age.TotalSeconds > 10) { return; }
-                if (dpm.dpm_dewpoint + StageOffset > dpm.dpm_airtemp)
+                if (dpm.DewPointTemperature  + StageOffset > dpm.AirTemperature)
                 {
-                    SetTecDesiredTemp(dpm.dpm_airtemp);
+                    SetTecDesiredTemp((float) (dpm.AirTemperature ));
                 }
                 else 
                 {
-                    SetTecDesiredTemp(dpm.dpm_dewpoint + StageOffset);
+                    SetTecDesiredTemp((float)(dpm.DewPointTemperature ) + StageOffset);
                 }
             } else // Manual Mode
             {
@@ -355,12 +371,12 @@ namespace AutoDefrost
         }
         private void ReadDPMValues()
         {
-            TimeSpan age = DateTime.Now - dpm.dpm_last_update;
+            TimeSpan age = DateTime.Now - dpm.LastUpdate;
 
             if (age.TotalSeconds < 30)
             {
-                BoxDpm_dp.Text = dpm.dpm_dewpoint.ToString("F", new CultureInfo("en-US"));
-                BoxDpm_airtemp.Text = dpm.dpm_airtemp.ToString("F", new CultureInfo("en-US"));
+                BoxDpm_dp.Text = dpm.DewPointTemperature.ToString("F", new CultureInfo("en-US"));
+                BoxDpm_airtemp.Text = dpm.AirTemperature.ToString("F", new CultureInfo("en-US"));
             } else
             {
                 BoxDpm_dp.Text = "NaN";

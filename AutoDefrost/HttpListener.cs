@@ -112,14 +112,14 @@ namespace AutoDefrost
                     if (context.Request.QueryString.Count >0)
                     {
                         //UpdateValues(context.Request.QueryString);
-                        lock (m_lock)
-                        {
+                        //lock (m_lock)
+                        //{
                             if (context.Request.QueryString["dewpoint"] != null) { Logger.Info("woo got DP"); dpm_dewpoint = float.Parse(context.Request.QueryString["dewpoint"]); }
                             if (context.Request.QueryString["airtemp"] != null) { Logger.Info("woo got airtemp"); dpm_airtemp = float.Parse(context.Request.QueryString["airtemp"]); }
                             if (context.Request.QueryString["rh"] != null) { Logger.Info("woo got rh"); dpm_hr = float.Parse(context.Request.QueryString["rh"]); }
                             if (context.Request.QueryString["sn"] != null) { Logger.Info("woo got sn"); dpm_sn = context.Request.QueryString["sn"]; }
                             dpm_last_update = DateTime.Now;
-                        }
+                        //}
                     }
                 }
             }

@@ -157,6 +157,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PosiTectorDPM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
